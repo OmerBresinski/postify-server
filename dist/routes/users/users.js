@@ -42,7 +42,30 @@ exports.__esModule = true;
 exports.users = void 0;
 var prismaClient_1 = require("../../prismaClient");
 var express_1 = __importDefault(require("express"));
+var passport_1 = __importDefault(require("passport"));
+var passport_twitter_1 = __importDefault(require("passport-twitter"));
 exports.users = express_1["default"].Router();
+passport_1["default"].use(new passport_twitter_1["default"].Strategy({
+    consumerKey: process.env.TWITTER_API_KEY,
+    consumerSecret: process.env.TWITTER_API_SECRET,
+    callbackURL: "http://127.0.0.1:4000/api/users/auth/twitter/callback"
+}, function (token, tokenSecret, profile, done) { return __awaiter(void 0, void 0, void 0, function () {
+    var user;
+    return __generator(this, function (_a) {
+        try {
+            // Find or create the user in your database based on their Twitter profile
+            console.log(profile);
+            user = prismaClient_1.prisma.users.create({
+                data: { email: "omer@twitter.com" }
+            });
+            return [2 /*return*/, done(null, user)];
+        }
+        catch (error) {
+            return [2 /*return*/, done(error)];
+        }
+        return [2 /*return*/];
+    });
+}); }));
 exports.users.post("/", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, email, profileUrl, note;
     return __generator(this, function (_b) {
@@ -83,4 +106,14 @@ exports.users.get("/:id", function (req, res) { return __awaiter(void 0, void 0,
         }
     });
 }); });
+exports.users.post("/auth/twitter", passport_1["default"].authenticate("twitter"));
+exports.users.get("/auth/twitter/callback", passport_1["default"].authenticate("twitter", { failureRedirect: "/login" }), function (req, res) {
+    console.log("Callback", { req: req, res: res });
+    // Successful authentication, redirect home.
+    res.redirect("/");
+});
+exports.users.get("/logout", function (req, res) {
+    req.logout({ keepSessionInfo: true }, function (err) { return console.log(err); });
+    res.redirect("/");
+});
 //# sourceMappingURL=users.js.map

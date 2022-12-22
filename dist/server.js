@@ -7,7 +7,16 @@ require("dotenv");
 var express_1 = __importDefault(require("express"));
 var cors_1 = __importDefault(require("cors"));
 var api_1 = require("./api");
+var passport_1 = __importDefault(require("passport"));
+var express_session_1 = __importDefault(require("express-session"));
 var app = (0, express_1["default"])();
+app.use((0, express_session_1["default"])({
+    secret: "shimmering_unicorn",
+    resave: false,
+    saveUninitialized: true
+}));
+app.use(passport_1["default"].initialize());
+app.use(passport_1["default"].session());
 app.use((0, cors_1["default"])());
 app.use(express_1["default"].json());
 app.use("/api", api_1.api);
