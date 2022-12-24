@@ -24,4 +24,7 @@ app.listen(config.SERVER_PORT, () =>
   console.log(`Server started on port ${config.SERVER_PORT}`)
 );
 
-process.on("SIGTERM", async () => process.exit());
+process.on("SIGTERM", async () => {
+  console.log("Restarting..");
+  process.exit();
+});

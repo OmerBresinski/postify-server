@@ -51,7 +51,10 @@ users.get("/:id", async (req: Request, res: Response) => {
   return res.json(user);
 });
 
-users.post("/auth/twitter", passport.authenticate("twitter"));
+users.post("/auth/twitter", () => {
+  console.log("auth");
+  passport.authenticate("twitter");
+});
 
 users.get(
   "/auth/twitter/callback",
