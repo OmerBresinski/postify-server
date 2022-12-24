@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 import { api } from "./api";
-import passport from "passport";
 import session from "express-session";
 import config from "@/config";
 
@@ -9,14 +8,17 @@ const app = express();
 
 app.use(
   session({
+    name: "postify",
     secret: "shimmering_unicorn",
     resave: false,
     saveUninitialized: true,
+    cookie: {
+      secure: false,
+      maxAge: 24 * 60 * 60 * 1000,
+    },
   })
 );
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(cors());
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.json());
 app.use("/api", api);
 

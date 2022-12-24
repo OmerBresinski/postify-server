@@ -1,47 +1,13 @@
 import { prisma } from "../../../prismaClient";
-import { Users } from "@prisma/client";
 import express from "express";
-import passport from "passport";
-import TwitterStrategy from "passport-twitter";
 import type { Request, Response } from "express";
-import config from "@/config";
+import { getTwitterClient } from "@/utils/twitter/twitterClient";
 
+let x = "";
 export const users = express.Router();
-passport.use(
-  new TwitterStrategy.Strategy(
-    {
-      consumerKey: config.TWITTER_API_KEY!,
-      consumerSecret: config.TWITTER_API_SECRET!,
-      callbackURL: "http://127.0.0.1:4000/api/users/auth/twitter/callback",
-    },
-    async (token, tokenSecret, profile, done) => {
-      try {
-        // Find or create the user in your database based on their Twitter profile
-        console.log(profile);
-        // const user = await findOrCreateUser(profile);
-        const user = prisma.users.create({
-          data: { email: "omer@twitter.com" },
-        });
-        return done(null, user);
-      } catch (error) {
-        return done(error);
-      }
-    }
-  )
-);
+const callbackURL = "http://127.0.0.1:4000/api/users/auth/twitter/callback";
 
-users.post("/", async (req: Request, res: Response) => {
-  const { email, profileUrl } = req.body as Users;
-  const note = await prisma.users.create({
-    data: {
-      email,
-      profileUrl,
-    },
-  });
-  return res.json(note);
-});
-
-users.get("/", async (_req: Request, res: Response) => {
+users.get("/", async (req: Request, res: Response) => {
   const users = await prisma.users.findMany();
   return res.json(users);
 });
@@ -51,22 +17,39 @@ users.get("/:id", async (req: Request, res: Response) => {
   return res.json(user);
 });
 
-users.post("/auth/twitter", () => {
-  console.log("auth");
-  passport.authenticate("twitter");
+users.get("/auth/twitter", (req: Request, res: Response) => {
+  const { url, codeVerifier, state } =
+    getTwitterClient().generateOAuth2AuthLink(callbackURL, {
+      scope: ["tweet.write", "tweet.read", "users.read", "offline.access"],
+    });
+
+  x = codeVerifier;
+  res.send({ authUrl: url });
 });
 
-users.get(
-  "/auth/twitter/callback",
-  passport.authenticate("twitter", { failureRedirect: "/login" }),
-  (req, res) => {
-    console.log("Callback", { req, res });
-    // Successful authentication, redirect home.
-    res.redirect("/");
-  }
-);
+users.get("/auth/twitter/callback", async (req: Request, res) => {
+  //get the code and state variables from req.query, and implement the callback function
+  const { code, state } = req.query;
+  res.redirect(`http://localhost:5173/?code=${code}&state=${state}}`);
+});
 
 users.get("/logout", (req, res) => {
   req.logout({ keepSessionInfo: true }, (err) => console.log(err));
   res.redirect("/");
+});
+
+users.post("/login", async (req, res) => {
+  const { code, codeVerifier, redirectUri } = req.body;
+  console.log({ code });
+  try {
+    const twitter = await getTwitterClient().loginWithOAuth2({
+      code,
+      codeVerifier: x,
+      redirectUri: callbackURL,
+    });
+    const tweets = await twitter.client.v2.tweets("1590447156103897088");
+    console.log(tweets);
+  } catch (err) {
+    console.log(err);
+  }
 });
