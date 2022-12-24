@@ -1,16 +1,17 @@
-import { prisma } from "../../prismaClient";
+import { prisma } from "../../../prismaClient";
 import { Users } from "@prisma/client";
 import express from "express";
 import passport from "passport";
 import TwitterStrategy from "passport-twitter";
 import type { Request, Response } from "express";
+import config from "@/config";
 
 export const users = express.Router();
 passport.use(
   new TwitterStrategy.Strategy(
     {
-      consumerKey: process.env.TWITTER_API_KEY!,
-      consumerSecret: process.env.TWITTER_API_SECRET!,
+      consumerKey: config.TWITTER_API_KEY!,
+      consumerSecret: config.TWITTER_API_SECRET!,
       callbackURL: "http://127.0.0.1:4000/api/users/auth/twitter/callback",
     },
     async (token, tokenSecret, profile, done) => {
