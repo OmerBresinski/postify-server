@@ -5,3 +5,4 @@ import * as Routes from "../routes";
 export const api = express.Router();
 
 api.use("/users", Routes.users);
+api.use("/auth", Routes.auth);
