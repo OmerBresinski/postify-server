@@ -21,15 +21,15 @@ app.use(
     credentials: true,
   })
 );
+app.use(cookieParser());
 app.use(
   session({
     name: "postify",
     secret: "shimmering_unicorn",
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
       secure: false,
-      sameSite: "none",
     },
   })
 );

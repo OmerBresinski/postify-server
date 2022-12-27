@@ -5,7 +5,6 @@ import type { Request, Response } from "express";
 export const users = express.Router();
 
 users.get("/", async (req: Request, res: Response) => {
-  console.log(req.session);
   const users = await prismaClient.users.findMany();
   return res.json(users);
 });
