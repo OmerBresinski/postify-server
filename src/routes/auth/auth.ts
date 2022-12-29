@@ -2,56 +2,63 @@ import express from "express";
 import Config from "@/config";
 import { prismaClient } from "@/utils/prisma/prismaClient";
 import passport from "passport";
-import Twitter from "passport-twitter";
+import { Strategy as TwitterStrategy } from "@superfaceai/passport-twitter-oauth2";
 
-const TwitterStrategy = Twitter.Strategy;
+passport.serializeUser(function (user, cb) {
+  process.nextTick(function () {
+    cb(null, user);
+  });
+});
+
+passport.deserializeUser(function (user: Express.User, cb) {
+  process.nextTick(function () {
+    return cb(null, user);
+  });
+});
+
 passport.use(
   new TwitterStrategy(
     {
-      consumerKey: Config.TWITTER_API_KEY!,
-      consumerSecret: Config.TWITTER_API_SECRET!,
-      callbackURL: "http://127.0.0.1:4000/api/auth/twitter/callback",
+      clientType: "confidential",
+      clientID: Config.TWITTER_CLIENT_ID!,
+      clientSecret: Config.TWITTER_CLIENT_SECRET!,
+      callbackURL: Config.TWITTER_CALLBACK_URL!,
     },
-    async function (token, tokenSecret, profile, cb) {
+    async function (accessToken, refreshToken, profile, done) {
       const user = await prismaClient.users.upsert({
         where: {
           twitterId: profile.id,
         },
         update: {
-          twitterAccessToken: token,
-          twitterAccessSecret: tokenSecret,
+          twitterAccessToken: accessToken,
+          twitterAccessSecret: refreshToken,
           profileUrl: profile.photos?.[0].value,
         },
         create: {
           twitterId: profile.id,
-          twitterAccessToken: token,
-          twitterAccessSecret: tokenSecret,
+          twitterAccessToken: accessToken,
+          twitterAccessSecret: refreshToken,
           profileUrl: profile.photos?.[0].value,
         },
       });
-
-      cb(user);
+      done(null, user);
     }
   )
 );
 
-passport.serializeUser(function (user, cb) {
-  cb(null, user);
-});
-
-passport.deserializeUser(function (obj, cb) {
-  cb(null, obj as any);
-});
-
 export const auth = express.Router();
 
-auth.get("/twitter", passport.authenticate("twitter"));
+auth.get(
+  "/twitter",
+  passport.authenticate("twitter", {
+    scope: ["tweet.read", "tweet.write", "users.read", "offline.access"],
+  })
+);
 
 auth.get(
   "/twitter/callback",
-  passport.authenticate("twitter", { failureRedirect: "/login" }),
-  function (req, res) {
-    console.log("callback", req);
-    res.redirect("http://127.0.0.1:5173/");
-  }
+  passport.authenticate("twitter", {
+    successRedirect: "http://127.0.0.1:5173/",
+    failureRedirect: "/login",
+  })
 );

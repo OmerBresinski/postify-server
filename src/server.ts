@@ -28,15 +28,13 @@ app.use(
     secret: "shimmering_unicorn",
     resave: false,
     saveUninitialized: false,
-    cookie: {
-      secure: false,
-    },
   })
 );
+app.use(passport.authenticate("session"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
 
 app.use("/api", api);
 
