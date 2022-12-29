@@ -1,4 +1,4 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import Config from "@/config";
 import { prismaClient } from "@/utils/prisma/prismaClient";
 import passport from "passport";
@@ -62,3 +62,12 @@ auth.get(
     failureRedirect: "/login",
   })
 );
+
+auth.get("/logout", (req: Request, res: Response, next: NextFunction) => {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.redirect("http://127.0.0.1:5173/login");
+  });
+});

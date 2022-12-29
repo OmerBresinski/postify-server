@@ -28,6 +28,9 @@ app.use(
     secret: "shimmering_unicorn",
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    },
   })
 );
 app.use(passport.authenticate("session"));
