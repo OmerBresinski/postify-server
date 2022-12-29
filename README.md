@@ -13,7 +13,7 @@
 - `TWITTER_CLIENT_SECRET= your twitter app credentials`
 3. Run the following commands to start the server:
 - `npm install`
-- `npm run migrate:dev migrationName`
+- `npm run migrate:dev migration_name`
 - `npm run build`
 - `npm run start:watch`
 4. Whenever you change the entity structure in the `prisma.schema` file, make sure to run `npm run migrate:dev` again.
