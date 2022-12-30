@@ -47,7 +47,7 @@ app.listen(config.SERVER_PORT, () =>
   console.log(`Server started on port ${config.SERVER_PORT}`)
 );
 
-const ONE_MINUTE = 1000 * 10;
+// const ONE_MINUTE = 1000 * 10;
 // setInterval(async () => {
 //   try {
 //     console.log(`${new Date()} scheduling`);
