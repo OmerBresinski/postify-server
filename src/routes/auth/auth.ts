@@ -59,7 +59,7 @@ auth.get(
   "/twitter/callback",
   passport.authenticate("twitter", {
     successRedirect: "http://127.0.0.1:5173/",
-    failureRedirect: "/login",
+    failureRedirect: "http://127.0.0.1:5173/login",
   })
 );
 

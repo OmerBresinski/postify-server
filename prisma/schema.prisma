@@ -20,7 +20,7 @@ model Users {
 
 enum TweetStatus {
   pending
-  sent
+  scheduled
 }
 
 model Tweets {
