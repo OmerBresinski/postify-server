@@ -32,11 +32,13 @@ passport.use(
         update: {
           twitterAccessToken: accessToken,
           profileUrl: profile.photos?.[0].value,
+          twitterUsername: profile.username,
         },
         create: {
           twitterId: profile.id,
           twitterAccessToken: accessToken,
           profileUrl: profile.photos?.[0].value,
+          twitterUsername: profile.username,
         },
       });
       done(null, user);

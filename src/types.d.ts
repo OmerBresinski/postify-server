@@ -10,6 +10,7 @@ declare global {
       createdAt: Date;
       updatedAt: Date;
       twitterAccessToken: string;
+      twitterUsername: string;
     }
   }
 }
