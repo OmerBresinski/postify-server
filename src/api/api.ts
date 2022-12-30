@@ -13,3 +13,4 @@ api.use((req, res, next) => {
   }
 });
 api.use("/users", Routes.users);
+api.use("/tweets", Routes.tweets);

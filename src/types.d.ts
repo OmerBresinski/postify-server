@@ -1,4 +1,18 @@
+import "express";
 import "express-session";
+
+declare global {
+  namespace Express {
+    interface User {
+      id: number;
+      twitterId: string;
+      profileUrl?: string | null;
+      createdAt: Date;
+      updatedAt: Date;
+      twitterAccessToken: string;
+    }
+  }
+}
 declare module "express-session" {
   interface SessionData {
     code?: string;

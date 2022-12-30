@@ -24,20 +24,18 @@ passport.use(
       clientSecret: Config.TWITTER_CLIENT_SECRET!,
       callbackURL: Config.TWITTER_CALLBACK_URL!,
     },
-    async function (accessToken, refreshToken, profile, done) {
+    async function (accessToken, _refreshToken, profile, done) {
       const user = await prismaClient.users.upsert({
         where: {
           twitterId: profile.id,
         },
         update: {
           twitterAccessToken: accessToken,
-          twitterAccessSecret: refreshToken,
           profileUrl: profile.photos?.[0].value,
         },
         create: {
           twitterId: profile.id,
           twitterAccessToken: accessToken,
-          twitterAccessSecret: refreshToken,
           profileUrl: profile.photos?.[0].value,
         },
       });
