@@ -18,12 +18,18 @@ model Users {
   tweets             Tweets[]
 }
 
+enum TweetStatus {
+  pending
+  sent
+}
+
 model Tweets {
-  id            Int      @id @default(autoincrement())
+  id            Int         @id @default(autoincrement())
   text          String
   scheduledDate DateTime
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  user          Users    @relation(fields: [userId], references: [id])
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  user          Users       @relation(fields: [userId], references: [id])
   userId        Int
+  status        TweetStatus @default(value: pending)
 }
