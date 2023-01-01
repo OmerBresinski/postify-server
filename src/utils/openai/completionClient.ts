@@ -37,7 +37,7 @@ export const getCompletionClient = () => {
         model: "text-davinci-003",
         prompt,
         max_tokens: 255,
-        n: 4,
+        n: 1,
       });
     },
   };

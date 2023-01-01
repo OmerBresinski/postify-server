@@ -1,1 +1,3 @@
-export { prismaClient } from "postify-db";
+import { PrismaClient } from "@prisma/client";
+
+export const prismaClient = new PrismaClient();
