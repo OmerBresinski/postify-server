@@ -18,8 +18,8 @@ const configuration = new Configuration({
 
 const getPrompt = ({ text, pastTweets }: Instructions) => {
   try {
-    const pastTweetsText = pastTweets.map((tweet) => tweet.text).join('"\n"');
-    return `Considering the following past tweets of this twitter user, as well as their sentiment: "${pastTweetsText}",\nwrite a tweet using the same writing style, while ignoring any tags, but which would convey the following text: ${text}\n without tagging anyone or using any hashtags and no quotes`;
+    const pastTweetsText = pastTweets?.map((tweet) => tweet.text).join('",\n"');
+    return `As a twitter influencer, create a tweet using the following text as inspiration: "${text}", without using any hashtags or tags`;
   } catch (ex) {
     console.log(ex);
     return "";
@@ -32,6 +32,8 @@ export const getCompletionClient = () => {
   return {
     createCompletion: async ({ text, pastTweets }: Instructions) => {
       const prompt = getPrompt({ text, pastTweets });
+
+      console.log(prompt);
 
       return openai.createCompletion({
         model: "text-davinci-003",
