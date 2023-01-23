@@ -19,7 +19,8 @@ const configuration = new Configuration({
 const getPrompt = ({ text, pastTweets }: Instructions) => {
   try {
     const pastTweetsText = pastTweets?.map((tweet) => tweet.text).join('",\n"');
-    return `As a twitter influencer, create a tweet using the following text as inspiration: "${text}", without using any hashtags or tags`;
+    const instructions = `Write an insightful tweet using the following text as inspiration: "${text}", without tagging anyone, in the writing style of Donald Trump. Tag #techTwitter`;
+    return instructions.replace(/"/g, "");
   } catch (ex) {
     console.log(ex);
     return "";
@@ -39,7 +40,7 @@ export const getCompletionClient = () => {
         model: "text-davinci-003",
         prompt,
         max_tokens: 255,
-        n: 1,
+        n: 48,
       });
     },
   };
